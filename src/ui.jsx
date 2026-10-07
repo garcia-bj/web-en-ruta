@@ -25,6 +25,12 @@ export function Reveal({ as: T = 'div', delay = 0, className = '', style, childr
   )
 }
 
+// Splits a string into words that rise in one by one once an ancestor has `.in`.
+export const Words = ({ children }) =>
+  String(children).split(' ').map((w, i) => (
+    <span key={i} className="wd"><span style={{ '--i': i }}>{w}&nbsp;</span></span>
+  ))
+
 export function Count({ to, suffix = '', dur = 1500 }) {
   const [ref, on] = useInView(0.5)
   const [v, setV] = useState(0)

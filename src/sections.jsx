@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import BoliviaMap from './BoliviaMap.jsx'
-import { Count, Icon, Logo, Reveal } from './ui.jsx'
+import { Count, Icon, Logo, Reveal, Words } from './ui.jsx'
 
 const Send = ({ children = 'Enviar un paquete', cls = 'primary lg' }) => (
   <a href="#enviar" data-send className={`btn ${cls}`}>{children} <Icon n="arrow" size={18} className="arr" /></a>
@@ -56,7 +56,11 @@ export function Hero() {
             <a href="#como-funciona" className="btn ghost lg">Ver cómo funciona</a>
           </div>
         </div>
-        <div className="hero-stage">
+        <div className="hero-stage" onMouseMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect()
+          e.currentTarget.style.setProperty('--mx', (e.clientX - r.left) / r.width - 0.5)
+          e.currentTarget.style.setProperty('--my', (e.clientY - r.top) / r.height - 0.5)
+        }}>
           <div className="stage-map"><BoliviaMap /></div>
           <div className="tcard hero-card">
             <div className="tc-top"><span className="live"><i />En tránsito</span><span className="mono">ENR-28491</span></div>
@@ -130,7 +134,7 @@ export function Problem() {
       <div className="container">
         <div className="prob-grid">
           <Reveal>
-            <h2 className="h2">Enviar un paquete no debería quitarte toda una tarde.</h2>
+            <h2 className="h2"><Words>Enviar un paquete no debería quitarte toda una tarde.</Words></h2>
             <p className="body">Actualmente, enviar un paquete entre ciudades puede significar trasladarse hasta una terminal, esperar, entregar el paquete y después quedarse sin saber exactamente cuándo llegará.</p>
           </Reveal>
           <Scene />
@@ -195,7 +199,7 @@ export function How() {
       <div className="container">
         <Reveal className="sec-head">
           <p className="kicker">Cómo funciona</p>
-          <h2 className="h2">Cuatro pasos. Cero filas.</h2>
+          <h2 className="h2"><Words>Cuatro pasos. Cero filas.</Words></h2>
         </Reveal>
         <Reveal className="steps">
           <div className="steps-line"><i /></div>
@@ -216,11 +220,33 @@ export function How() {
 /* ───────────── TRACKING ───────────── */
 const TL = [['Envío solicitado', 'Cochabamba · 08:05'], ['Paquete recibido', 'Cochabamba · 09:10'], ['Salió de Cochabamba', '11:32'], ['En ruta', 'Carretera a Santa Cruz'], ['Llegada a Santa Cruz', 'Estimada 18:40'], ['Entregado', '']]
 const NOW = 3
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
 export function Tracking() {
   const [code, setCode] = useState('ENR-28491')
   const [shown, setShown] = useState(true)
   const [run, setRun] = useState(0)
+  // Wide screens: the section pins and scrolling advances the shipment (p: 0 → 1). Elsewhere it stays static.
+  const secRef = useRef(null)
+  const [scrub, setScrub] = useState(false)
+  const [p, setP] = useState(0)
+  useEffect(() => {
+    const mq = matchMedia('(min-width:1000px) and (min-height:640px)')
+    const f = () => setScrub(mq.matches)
+    f(); mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+  useEffect(() => {
+    if (!scrub) return
+    const f = () => {
+      const r = secRef.current.getBoundingClientRect()
+      setP(Math.round(clamp(-r.top / (r.height - innerHeight), 0, 1) * 100) / 100)
+    }
+    f(); addEventListener('scroll', f, { passive: true })
+    return () => removeEventListener('scroll', f)
+  }, [scrub])
+  const now = scrub ? clamp(Math.floor(p * 5.99) + 1, 1, 5) : NOW
+  const prog = scrub ? 0.06 + p * 0.88 : 0.55
   const submit = (e) => {
     e.preventDefault()
     const ok = code.trim().toUpperCase() === 'ENR-28491'
@@ -228,12 +254,12 @@ export function Tracking() {
     if (ok) setRun((n) => n + 1)
   }
   return (
-    <section id="seguimiento" className="sec track">
-      <div className="container">
+    <section id="seguimiento" ref={secRef} className={`sec track ${scrub ? 'scrub' : ''}`}>
+      <div className="sticky"><div className="container">
         <Reveal className="sec-head split">
           <div>
             <p className="kicker">Seguimiento</p>
-            <h2 className="h2">Siempre sabes dónde está.</h2>
+            <h2 className="h2"><Words>Siempre sabes dónde está.</Words></h2>
           </div>
           <form className="trackform" onSubmit={submit}>
             <Icon n="search" size={18} />
@@ -250,29 +276,30 @@ export function Tracking() {
                   <small className="muted">Código de seguimiento</small>
                   <h3 className="mono big">ENR-28491</h3>
                 </div>
-                <span className="live pill"><i />En tránsito</span>
+                <span className="live pill"><i />{now === 5 ? 'Entregado' : 'En tránsito'}</span>
               </div>
               <p className="tc-route lg">Cochabamba <Icon n="arrow" size={18} /> Santa Cruz</p>
               <ol className="tl">
                 {TL.map(([t, s], i) => (
-                  <li key={t} className={i < NOW ? 'done' : i === NOW ? 'now' : ''} style={{ '--d': `${300 + i * 160}ms` }}>
-                    <span className="node">{i < NOW && <Icon n="check" size={13} />}</span>
+                  <li key={t} className={i < now ? 'done' : i === now ? 'now' : ''} style={{ '--d': `${300 + i * 160}ms` }}>
+                    <span className="node">{i < now && <Icon n="check" size={13} />}</span>
                     <div><b>{t}</b>{s && <small>{s}</small>}</div>
                   </li>
                 ))}
               </ol>
-              <div className="trk-foot"><span><small>Última actualización</small><b>Hace 4 minutos</b></span><span><small>Llegada estimada</small><b>Hoy · 18:40</b></span></div>
+              <div className="trk-foot"><span><small>Última actualización</small><b>{scrub && p > 0.02 ? 'Ahora mismo' : 'Hace 4 minutos'}</b></span><span><small>Llegada estimada</small><b>Hoy · 18:40</b></span></div>
             </div>
             <div className="trk-map">
-              <BoliviaMap view="45 195 230 125" routes={['sc']} cities={['cb', 'sc']} progress={0.55} fs={7} />
+              <BoliviaMap view="45 195 230 125" routes={['sc']} cities={['cb', 'sc']} progress={prog} fs={7} />
               <div className="chip-float on-map"><Icon n="truck" size={15} /> Transporte en movimiento</div>
+              {scrub && <span className="hint">Desplaza para avanzar el envío</span>}
             </div>
           </Reveal>
         ) : (
           <p className="nf card">No encontramos ese código. Prueba con <button type="button" onClick={() => { setCode('ENR-28491'); setShown(true); setRun((n) => n + 1) }}>ENR-28491</button>.</p>
         )}
       </div>
-    </section>
+    </div></section>
   )
 }
 
@@ -283,7 +310,7 @@ export function People() {
       <div className="container two">
         <Reveal>
           <p className="kicker">Para personas</p>
-          <h2 className="h2">Envía desde donde estés.</h2>
+          <h2 className="h2"><Words>Envía desde donde estés.</Words></h2>
           <p className="body">No necesitas perder tiempo en terminales ni depender de mensajes para saber dónde está tu paquete.</p>
           <ul className="benefits">
             {[['clock', 'Menos traslados', 'Gestiona tu envío sin perder horas.'], ['shield', 'Más tranquilidad', 'Conoce el estado de tu paquete.'], ['compass', 'Más control', 'Información clara durante todo el recorrido.']].map(([ic, t, p]) => (
@@ -319,7 +346,7 @@ export function Business() {
       <div className="container two">
         <Reveal>
           <p className="kicker">Para negocios</p>
-          <h2 className="h2">Tus ventas no terminan cuando haces clic en “vender”.</h2>
+          <h2 className="h2"><Words>Tus ventas no terminan cuando haces clic en “vender”.</Words></h2>
           <p className="body">En Ruta ayuda a negocios y emprendedores a gestionar sus despachos de forma recurrente, sin convertir cada envío en una tarea manual.</p>
           <ul className="bl">
             {[['repeat', 'Despachos recurrentes'], ['eye', 'Seguimiento de pedidos'], ['clock', 'Menos tiempo operativo'], ['layers', 'Mayor control de entregas']].map(([ic, t]) => (
@@ -356,7 +383,7 @@ export function Network() {
       <div className="container">
         <Reveal className="sec-head center">
           <p className="kicker">Red de transporte</p>
-          <h2 className="h2">Una ruta. Muchas posibilidades.</h2>
+          <h2 className="h2"><Words>Una ruta. Muchas posibilidades.</Words></h2>
           <p className="body">En Ruta conecta la demanda de envíos con operadores de transporte y delivery para aprovechar mejor las rutas existentes.</p>
         </Reveal>
         <Reveal className="flow">
@@ -386,7 +413,7 @@ export function Proof() {
       <div className="container">
         <Reveal className="sec-head">
           <p className="kicker">Validación</p>
-          <h2 className="h2">Ya estamos moviéndonos.</h2>
+          <h2 className="h2"><Words>Ya estamos moviéndonos.</Words></h2>
           <p className="body">En Ruta no nace solo de una idea. La solución fue validada con usuarios, negocios y operadores de transporte.</p>
         </Reveal>
         <div className="stats">
@@ -410,7 +437,7 @@ export function Carriers() {
       <div className="container two">
         <Reveal>
           <p className="kicker">Transportistas</p>
-          <h2 className="h2">Convierte el espacio disponible en una oportunidad.</h2>
+          <h2 className="h2"><Words>Convierte el espacio disponible en una oportunidad.</Words></h2>
           <p className="body">Los transportistas pueden integrar sus rutas a En Ruta y generar ingresos adicionales aprovechando mejor la capacidad de sus vehículos.</p>
           <a href="#transportista" data-send className="btn dark lg">Quiero ser transportista <Icon n="arrow" size={18} className="arr" /></a>
         </Reveal>
@@ -446,7 +473,7 @@ export function Coverage() {
         <Reveal className="sec-head split">
           <div>
             <p className="kicker">Cobertura</p>
-            <h2 className="h2">Conectando ciudades, una ruta a la vez.</h2>
+            <h2 className="h2"><Words>Conectando ciudades, una ruta a la vez.</Words></h2>
           </div>
           <ul className="legend">
             <li><i className="lg-o" />Origen inicial · Cochabamba</li>

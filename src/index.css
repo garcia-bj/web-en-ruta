@@ -364,3 +364,38 @@ small{font-size:.8rem}
 .intro path{stroke-dasharray:1;stroke-dashoffset:1;animation:dash 1s .2s var(--ease) forwards}
 @keyframes introOut{to{opacity:0;visibility:hidden;clip-path:inset(0 0 100% 0)}}
 @media (prefers-reduced-motion:reduce){.intro{display:none}.rv{filter:none!important}.benefits li,.bl li,.op,.plus div,.dept{opacity:1!important;transform:none!important}}
+
+/* ───── round 2: screen-to-screen feel ───── */
+.wd{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.wd>span{display:inline-block;transform:translateY(110%);transition:transform .9s var(--ease) calc(var(--i)*70ms + var(--d,0s))}
+.in .wd>span{transform:none}
+.sec-head.center .wd{vertical-align:baseline}
+
+/* sections slide over the previous one like cards */
+.biz,.final,.footer{border-radius:44px 44px 0 0;margin-top:-44px;position:relative;z-index:1}
+
+.network,.net{position:relative}
+
+/* hero leaves with the scroll; layers follow the cursor */
+.hero-copy{transform:translateY(calc(var(--sy,0)*-.1px));opacity:calc(1 - var(--sy,0)/900)}
+.hero-card{translate:calc(var(--mx,0)*-18px) calc(var(--my,0)*-14px);transition:translate .4s var(--ease)}
+.hero-stage .chip-float{translate:calc(var(--mx,0)*22px) calc(var(--my,0)*18px);transition:translate .4s var(--ease)}
+.stage-map .map{transform:translate(calc(var(--mx,0)*10px),calc(var(--my,0)*8px));transition:transform .5s var(--ease)}
+
+/* pinned tracking: scroll advances the shipment */
+.track.scrub{padding:0;height:320vh}
+.track.scrub .sticky{position:sticky;top:0;height:100vh;display:flex;align-items:flex-start;padding-top:92px}
+.track.scrub .sticky>.container{width:min(1240px,100% - 40px)}
+.track.scrub .sec-head{margin-bottom:20px}.track.scrub .h2{font-size:clamp(2rem,4vw,3rem)}.track.scrub .big{font-size:1.4rem}.track.scrub .tc-route.lg{margin:8px 0 14px}.track.scrub .trk-foot{margin-top:14px;padding-top:12px}
+.track.scrub .trk{padding:26px 30px}
+.track.scrub .trk-map{min-height:0;height:min(52vh,500px)}
+.track.scrub .tl li{padding-bottom:16px}
+.track.scrub .tl li,.track.scrub .tl .node{transition:opacity .5s,background .4s,border-color .4s}
+.track.scrub .tl li:not(:last-child)::before{transition:background .4s}
+.hint{position:absolute;right:16px;bottom:16px;font-size:.78rem;font-weight:600;color:var(--mut);display:inline-flex;gap:8px;align-items:center}
+.hint::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--o);animation:ping 1.6s infinite}
+.vehicle-move,.veh{transition:transform .5s linear}
+
+/* images/cards respond to the cursor */
+.card,.orders,.phone{will-change:transform}
+::selection{background:var(--o);color:#fff}
