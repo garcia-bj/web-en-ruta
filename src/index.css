@@ -399,3 +399,9 @@ small{font-size:.8rem}
 /* images/cards respond to the cursor */
 .card,.orders,.phone{will-change:transform}
 ::selection{background:var(--o);color:#fff}
+
+/* scroll-driven van */
+.scrollcar{position:fixed;left:0;top:0;z-index:40;pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 10px 14px rgba(15,16,18,.18))}
+.scrollcar .wheel{transform-box:fill-box;transform-origin:center;transform:rotate(var(--wr,0deg))}
+.scrollcar .speed,.scrollcar .beam{opacity:var(--sp,0)}
+@media (prefers-reduced-motion:reduce){.scrollcar{display:none}}

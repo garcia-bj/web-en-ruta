@@ -30,7 +30,7 @@ Requiere Node 20+ y pnpm.
 | Cobertura | Mapa de Bolivia por departamentos, con Cochabamba como origen |
 | CTA final + Footer | Fondo oscuro con ruta atravesando la sección |
 
-Transiciones globales: pantalla de entrada, barra de progreso de scroll, revelado palabra por palabra en títulos, desenfoque → nitidez al entrar, secciones oscuras que se deslizan sobre la anterior, brillo en botones y `prefers-reduced-motion` respetado.
+Transiciones globales: furgoneta que recorre la página con el scroll (`ScrollCar.jsx`),  pantalla de entrada, barra de progreso de scroll, revelado palabra por palabra en títulos, desenfoque → nitidez al entrar, secciones oscuras que se deslizan sobre la anterior, brillo en botones y `prefers-reduced-motion` respetado.
 
 ## Estructura
 
@@ -40,6 +40,7 @@ src/
 ├─ sections.jsx     # todas las secciones de la página
 ├─ BoliviaMap.jsx   # mapa SVG: departamentos, ciudades, rutas y vehículos
 ├─ boliviaGeo.js    # límites departamentales ya simplificados y proyectados
+├─ ScrollCar.jsx    # furgoneta guiada por el scroll: crece, cruza la pantalla y se estaciona
 ├─ ui.jsx           # Reveal, Words, Count, Icon, Logo, useInView
 └─ index.css        # estilos y animaciones (variables en :root)
 public/logo.png     # logotipo (fondo transparente)
