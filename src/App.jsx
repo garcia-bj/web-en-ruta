@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Logo } from './ui.jsx'
-import ScrollCar from './ScrollCar.jsx'
 import { Business, Carriers, Coverage, FinalCta, Footer, Hero, How, Nav, Network, People, Problem, Proof, SendDialog, Tracking } from './sections.jsx'
 
 export default function App() {
@@ -19,7 +18,6 @@ export default function App() {
       <div className="intro" aria-hidden="true"><div className="intro-in"><Logo />
         <svg viewBox="0 0 100 20" preserveAspectRatio="none"><path pathLength="1" d="M0 10C25 10 25 2 50 10S75 18 100 10" fill="none" stroke="#ff6a13" strokeWidth="3" strokeLinecap="round" /></svg></div></div>
       <div className="progress" />
-      <ScrollCar />
       <Nav />
       <main>
         <Hero />

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import BoliviaMap from './BoliviaMap.jsx'
+import { HeroVan, Rider, StepsLine } from './Rides.jsx'
 import { Count, Icon, Logo, Reveal, Words } from './ui.jsx'
 
 const Send = ({ children = 'Enviar un paquete', cls = 'primary lg' }) => (
@@ -72,6 +73,7 @@ export function Hero() {
           <div className="chip-float"><Icon n="box" size={16} /> Paquete recogido · 09:10</div>
         </div>
       </div>
+      <HeroVan />
       <div className="container trust">
         <span><Icon n="box" size={16} />Envíos reales</span>
         <span><Icon n="pin" size={16} />Seguimiento en tiempo real</span>
@@ -141,9 +143,7 @@ export function Problem() {
         </div>
 
         <Reveal className="bridge">
-          <svg className="bridge-line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
-            <path className="draw" pathLength="1" d="M0 90C200 90 220 30 420 30S700 100 1000 40" fill="none" stroke="#ff6a13" strokeWidth="4" />
-          </svg>
+          <Rider className="bridge-line" kind="moto" scale={0.55} vb="0 0 1000 120" preserve="none" d="M0 90C200 90 220 30 420 30S700 100 1000 40" a={0.95} b={0.4} />
           <div className="bridge-in">
             <h3 className="h3">En Ruta <span className="o">cambia eso.</span></h3>
             <p className="body">Tu envío comienza desde donde estás y puedes conocer su recorrido.</p>
@@ -202,7 +202,7 @@ export function How() {
           <h2 className="h2"><Words>Cuatro pasos. Cero filas.</Words></h2>
         </Reveal>
         <Reveal className="steps">
-          <div className="steps-line"><i /></div>
+          <StepsLine />
           {HOW.map(([t, p], i) => (
             <div key={t} className="step card" style={{ '--d': `${i * 140}ms` }}>
               <span className="num">0{i + 1}</span>
@@ -442,22 +442,11 @@ export function Carriers() {
           <a href="#transportista" data-send className="btn dark lg">Quiero ser transportista <Icon n="arrow" size={18} className="arr" /></a>
         </Reveal>
         <Reveal delay={150} className="road card">
-          <svg viewBox="0 0 520 240" aria-hidden="true">
-            <path id="road" d="M50 170C170 170 190 70 300 90S440 60 470 70" fill="none" stroke="#e3e0d8" strokeWidth="14" strokeLinecap="round" />
-            <path className="draw" pathLength="1" d="M50 170C170 170 190 70 300 90S440 60 470 70" fill="none" stroke="#fff" strokeWidth="2" strokeDasharray="1 1" />
-            <path d="M50 170C170 170 190 70 300 90S440 60 470 70" fill="none" stroke="#ff6a13" strokeWidth="14" strokeLinecap="round" className="draw" pathLength="1" opacity=".18" />
+          <Rider className="road-ride" kind="bus" scale={0.5} vb="0 0 520 240" d="M50 170C170 170 190 70 300 90S440 60 470 70" stroke={10} a={0.9} b={0.4}>
             {[[50, 170, 'Cochabamba'], [470, 70, 'Destino']].map(([x, y, t]) => (
               <g key={t}><circle cx={x} cy={y} r="9" fill="#111214" stroke="#fff" strokeWidth="3" /><text x={x} y={y + 30} textAnchor="middle" fontSize="13" fontWeight="600" fill="#111214" fontFamily="Inter">{t}</text></g>
             ))}
-            <g className="veh">
-              <rect x="-24" y="-16" width="34" height="24" rx="5" fill="#ff6a13" />
-              <path d="M10 -8h10l8 8v8H10z" fill="#111214" />
-              <circle cx="-12" cy="10" r="5" fill="#111214" stroke="#fff" strokeWidth="2" /><circle cx="18" cy="10" r="5" fill="#111214" stroke="#fff" strokeWidth="2" />
-              <animateMotion dur="8s" begin="1s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keyPoints="0;1" keySplines=".45 0 .55 1">
-                <mpath href="#road" />
-              </animateMotion>
-            </g>
-          </svg>
+          </Rider>
           <div className="cap"><span>Espacio disponible</span><div className="bar"><i style={{ '--w': '45%' }} /></div><b>Ingreso adicional</b></div>
         </Reveal>
       </div>
@@ -495,9 +484,7 @@ export function FinalCta() {
   return (
     <section className="final">
       <Reveal className="final-in">
-        <svg className="final-line" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
-          <path className="draw slow" pathLength="1" d="M-20 320C260 320 300 90 620 130S1000 330 1460 110" fill="none" stroke="#ff6a13" strokeWidth="5" />
-        </svg>
+        <Rider className="final-line" kind="van" scale={0.8} vb="0 0 1440 400" preserve="none" d="M-20 320C260 320 300 90 620 130S1000 330 1460 110" stroke={5} base="rgba(255,255,255,.12)" a={1} b={0.2} />
         <div className="container">
           <h2 className="display sm">Tu próximo envío <span className="o">empieza aquí.</span></h2>
           <p className="lead">Más simple. Más claro. Más En Ruta.</p>
